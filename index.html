@@ -3,46 +3,38 @@
 <head>
     <title>AR Chair Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/loaders/GLTFLoader.js"></script>
     <script>
-        // Detect the platform and load appropriate model
         function loadModel() {
             const userAgent = navigator.userAgent.toLowerCase();
             const isAndroid = userAgent.includes('android');
 
             if (isAndroid) {
-                // Remove the AR link and display the GLB viewer for Android devices
                 document.getElementById('ar-container').style.display = 'none';
                 initGLBViewer('/office_chair.glb');
             } else {
-                // For iOS and other platforms, keep the AR Quick Look link active
                 document.getElementById('info-text').innerText = "Tap the image to view the chair in AR.";
             }
         }
 
-        // Initialize the Three.js GLB viewer for Android
         function initGLBViewer(glbPath) {
             const container = document.getElementById('viewer-container');
 
-            // Set up scene, camera, and renderer
+            // Initialize Three.js components
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             container.appendChild(renderer.domElement);
 
-            // Add lighting to the scene
+            // Add ambient light
             const light = new THREE.AmbientLight(0xffffff, 1);
             scene.add(light);
 
-            // Load the GLB model
+            // Load GLB model using GLTFLoader
             const loader = new THREE.GLTFLoader();
             loader.load(glbPath, function (gltf) {
                 scene.add(gltf.scene);
                 camera.position.z = 2;
-
-                // Animation loop
                 renderer.setAnimationLoop(() => {
                     renderer.render(scene, camera);
                 });
@@ -65,7 +57,7 @@
 <body style="text-align: center; font-family: Arial, sans-serif;">
     <h1>View the Chair in AR</h1>
 
-    <!-- AR Quick Look Container for iOS and other devices -->
+    <!-- AR Quick Look Container for iOS and other platforms -->
     <div id="ar-container">
         <a id="ar-link" href="/ErgoMesh_Chair_0202185548.usdz" rel="ar">
             <img src="/placeholder-image.png" alt="View in AR" style="max-width: 100%; height: auto; border: 2px solid #ccc; padding: 10px;">
@@ -77,5 +69,9 @@
 
     <!-- Information Text -->
     <p id="info-text">Loading...</p>
+
+    <!-- Corrected Three.js and GLTFLoader scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/loaders/GLTFLoader.js"></script>
 </body>
 </html>
