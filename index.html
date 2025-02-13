@@ -32,6 +32,13 @@
             left: 50% !important;
             transform: translate(-50%, -50%) !important;
         }
+
+        /* Hide Object mode for iOS */
+        @supports (-webkit-touch-callout: none) {
+            .model-viewer-ui__controls-overlay {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body style="text-align: center; font-family: Arial, sans-serif;">
@@ -40,13 +47,14 @@
     <!-- Model Viewer Component -->
     <model-viewer
         src="/office_chair.glb"
-        ios-src="/ErgoMesh_Chair_0202185548.usdz"
+        ios-src="/ErgoMesh_Chair_0202185548.usdz#allowsContentScaling=0&mode=ar-only"
         alt="3D model of an office chair"
         ar
         ar-modes="webxr scene-viewer quick-look"
         camera-controls="false"
         auto-rotate="false"
         interaction-prompt="none"
+        ar-scale="fixed"
         style="width: 100%; height: 600px;">
         
         <button slot="ar-button" class="ar-button">
@@ -56,5 +64,12 @@
 
     <!-- Information Text -->
     <p id="info-text">Tap the button above to view the chair in your space using AR.</p>
+
+    <script>
+        // Force AR-only mode for iOS devices
+        if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+            document.querySelector('model-viewer').setAttribute('interaction-mode', 'none');
+        }
+    </script>
 </body>
 </html>
