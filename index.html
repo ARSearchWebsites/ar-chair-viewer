@@ -1,94 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>AR Chair Viewer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pure WebXR AR Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Google Model-Viewer library -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
     body {
-      text-align: center;
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      font-family: sans-serif;
+      text-align: center;
     }
-
-    h1 {
-      margin-top: 20px;
-    }
-
     model-viewer {
       width: 100%;
       height: 600px;
-      background-color: transparent;
-      --poster-color: transparent;
+      background-color: #f0f0f0;
     }
-
-    /* Hide the default model display (fallback) */
-    model-viewer::part(default) {
-      display: none;
-    }
-
-    /* Hide UI controls on iOS (just in case) */
-    @supports (-webkit-touch-callout: none) {
-      .model-viewer-ui__controls-overlay {
-        display: none !important;
-      }
-    }
-
-    /* Style the AR button */
     .ar-button {
-      background-color: #4285f4 !important;
-      color: white !important;
-      padding: 15px 25px !important;
-      font-size: 16px !important;
-      border-radius: 8px !important;
-      border: none !important;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
-      position: absolute !important;
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) !important;
-      cursor: pointer !important;
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      background-color: #4285f4;
+      color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
   </style>
 </head>
 <body>
-  <h1>View the Chair in AR</h1>
 
-  <model-viewer
-    id="chair-viewer"
-    src="/office_chair.glb"
-    ios-src="/ErgoMesh_Chair_0202185548.usdz"
-    alt="3D model of an office chair"
-    ar
-    ar-modes="scene-viewer webxr quick-look"
-    camera-controls
-    auto-rotate="false"
-    interaction-prompt="none"
-    ar-scale="fixed">
-    
-    <button slot="ar-button" class="ar-button">
-      Launch AR Experience 🚀
-    </button>
-  </model-viewer>
+<h1>WebXR AR on iOS (Experimental)</h1>
 
-  <p id="info-text">Tap the button above to view the chair in your space using AR.</p>
+<model-viewer
+  id="ar-model"
+  src="office_chair.glb"
+  alt="WebXR AR Model"
+  ar                   <!-- Enables AR mode -->
+  ar-modes="webxr"     <!-- Only use WebXR, no QuickLook fallback -->
+  camera-controls
+  auto-rotate
+  style="width: 100%; height: 600px;">
+  <!-- Custom AR button -->
+  <button slot="ar-button" class="ar-button">View in AR</button>
+</model-viewer>
 
-  <script>
-    const modelViewer = document.getElementById('chair-viewer');
-    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+<p>
+  This demo requires iOS 16.4+ and “WebXR” enabled under
+  <b>Settings &gt; Safari &gt; Advanced &gt; Experimental Features</b>.
+</p>
 
-    if (isIOS) {
-      // Force Quick Look only
-      modelViewer.setAttribute('ar-modes', 'quick-look');
-
-      // Hide 3D object mode by removing orbit controls
-      modelViewer.removeAttribute('camera-controls');
-
-      // Prevent normal 3D from showing
-      modelViewer.setAttribute('reveal', 'manual');
-    }
-  </script>
 </body>
 </html>
