@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Auto-Launch AR Chair Viewer</title>
+    <title>Simple AR Chair Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            background-color: #fff;
         }
         model-viewer {
             width: 100%;
-            height: 100vh;
-            background-color: transparent;
-            visibility: hidden; /* Hide until AR is triggered */
+            height: 600px;
+            background-color: #f0f0f0;
+        }
+        .ar-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #4285f4;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
     </style>
 </head>
 <body>
 
-<!-- Model Viewer -->
+<h1>View the Chair in AR</h1>
+
+<!-- 3D Model Viewer -->
 <model-viewer id="ar-model"
-    src="/office_chair.glb"
+    src="/office_chair.glb" 
     ios-src="/ErgoMesh_Chair_0202185548.usdz"
     alt="3D model of an office chair"
     ar
@@ -31,19 +44,15 @@
     auto-rotate>
 </model-viewer>
 
+<!-- AR Button -->
+<button id="ar-button" class="ar-button">View in AR</button>
+
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const modelViewer = document.getElementById('ar-model');
+    const arButton = document.getElementById('ar-button');
+    const modelViewer = document.getElementById('ar-model');
 
-        setTimeout(() => {
-            console.log("Attempting to launch AR...");
-
-            if (modelViewer.hasAttribute("ar")) {
-                modelViewer.activateAR();
-            } else {
-                console.warn("AR not supported on this device.");
-            }
-        }, 1500); // Delay ensures the page fully loads before triggering AR
+    arButton.addEventListener("click", () => {
+        modelViewer.activateAR();
     });
 </script>
 
