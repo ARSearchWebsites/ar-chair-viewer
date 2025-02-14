@@ -33,7 +33,7 @@
             transform: translate(-50%, -50%) !important;
         }
 
-        /* Hide Object mode for iOS */
+        /* Hide Object mode UI for iOS */
         @supports (-webkit-touch-callout: none) {
             .model-viewer-ui__controls-overlay {
                 display: none !important;
@@ -46,12 +46,13 @@
 
     <!-- Model Viewer Component -->
     <model-viewer
+        id="chair-viewer"
         src="/office_chair.glb"
         ios-src="/ErgoMesh_Chair_0202185548.usdz#allowsContentScaling=0&mode=ar-only"
         alt="3D model of an office chair"
         ar
         ar-modes="webxr scene-viewer quick-look"
-        camera-controls="false"
+        camera-controls="true"
         auto-rotate="false"
         interaction-prompt="none"
         ar-scale="fixed"
@@ -66,10 +67,20 @@
     <p id="info-text">Tap the button above to view the chair in your space using AR.</p>
 
     <script>
-        // Force AR-only mode for iOS devices
-        if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-            document.querySelector('model-viewer').setAttribute('interaction-mode', 'none');
-        }
+      // Detect iOS
+      const modelViewer = document.getElementById('chair-viewer');
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+
+      if (isIOS) {
+        // Use only Quick Look on iOS
+        modelViewer.setAttribute('ar-modes', 'quick-look');
+
+        // Remove camera controls to prevent object mode/fallback
+        modelViewer.removeAttribute('camera-controls');
+
+        // Prevent the normal 3D model from showing at all
+        modelViewer.setAttribute('reveal', 'manual');
+      }
     </script>
 </body>
 </html>
