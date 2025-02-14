@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>AR Chair Viewer</title>
+    <title>Auto-Launch AR Chair Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
@@ -14,13 +14,13 @@
             width: 100%;
             height: 100vh;
             background-color: transparent;
-            display: none; /* Hide before AR mode */
+            visibility: hidden; /* Hide until AR is triggered */
         }
     </style>
 </head>
 <body>
 
-<!-- Hidden Model Viewer (only used for AR trigger) -->
+<!-- Model Viewer -->
 <model-viewer id="ar-model"
     src="/office_chair.glb"
     ios-src="/ErgoMesh_Chair_0202185548.usdz"
@@ -35,12 +35,15 @@
     document.addEventListener("DOMContentLoaded", () => {
         const modelViewer = document.getElementById('ar-model');
 
-        // Auto-trigger AR experience
-        if (modelViewer.canActivateAR) {
-            modelViewer.activateAR();
-        } else {
-            console.warn("AR not supported or blocked by browser settings.");
-        }
+        setTimeout(() => {
+            console.log("Attempting to launch AR...");
+
+            if (modelViewer.hasAttribute("ar")) {
+                modelViewer.activateAR();
+            } else {
+                console.warn("AR not supported on this device.");
+            }
+        }, 1500); // Delay ensures the page fully loads before triggering AR
     });
 </script>
 
