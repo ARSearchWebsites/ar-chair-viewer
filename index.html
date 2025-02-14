@@ -1,86 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>AR Chair Viewer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Import Model-Viewer JavaScript and Components -->
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-    <style>
-        model-viewer {
-            width: 100%;
-            height: 600px;
-            background-color: transparent;
-            --poster-color: transparent;
-        }
-        
-        /* Hide the default model display */
-        model-viewer::part(default) {
-            display: none;
-        }
-        
-        /* Style the AR button to be more prominent */
-        .ar-button {
-            background-color: #4285f4 !important;
-            color: white !important;
-            padding: 15px 25px !important;
-            font-size: 16px !important;
-            border-radius: 8px !important;
-            border: none !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
-            position: absolute !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-        }
+  <title>AR Chair Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Model-Viewer library -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
 
-        /* Hide Object mode UI for iOS */
-        @supports (-webkit-touch-callout: none) {
-            .model-viewer-ui__controls-overlay {
-                display: none !important;
-            }
-        }
-    </style>
-</head>
-<body style="text-align: center; font-family: Arial, sans-serif;">
-    <h1>View the Chair in AR</h1>
+    h1 {
+      margin-top: 20px;
+    }
 
-    <!-- Model Viewer Component -->
-    <model-viewer
-        id="chair-viewer"
-        src="/office_chair.glb"
-        ios-src="/ErgoMesh_Chair_0202185548.usdz#allowsContentScaling=0&mode=ar-only"
-        alt="3D model of an office chair"
-        ar
-        ar-modes="webxr scene-viewer quick-look"
-        camera-controls="true"
-        auto-rotate="false"
-        interaction-prompt="none"
-        ar-scale="fixed"
-        style="width: 100%; height: 600px;">
-        
-        <button slot="ar-button" class="ar-button">
-            Launch AR Experience 🚀
-        </button>
-    </model-viewer>
+    model-viewer {
+      width: 100%;
+      height: 600px;
+      background-color: transparent;
+      --poster-color: transparent;
+    }
 
-    <!-- Information Text -->
-    <p id="info-text">Tap the button above to view the chair in your space using AR.</p>
+    /* Hide the default model display (fallback) */
+    model-viewer::part(default) {
+      display: none;
+    }
 
-    <script>
-      // Detect iOS
-      const modelViewer = document.getElementById('chair-viewer');
-      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-
-      if (isIOS) {
-        // Use only Quick Look on iOS
-        modelViewer.setAttribute('ar-modes', 'quick-look');
-
-        // Remove camera controls to prevent object mode/fallback
-        modelViewer.removeAttribute('camera-controls');
-
-        // Prevent the normal 3D model from showing at all
-        modelViewer.setAttribute('reveal', 'manual');
+    /* Hide UI controls on iOS (just in case) */
+    @supports (-webkit-touch-callout: none) {
+      .model-viewer-ui__controls-overlay {
+        display: none !important;
       }
-    </script>
+    }
+
+    /* Style the AR button */
+    .ar-button {
+      background-color: #4285f4 !important;
+      color: white !important;
+      padding: 15px 25px !important;
+      font-size: 16px !important;
+      border-radius: 8px !important;
+      border: none !important;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+      position: absolute !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      cursor: pointer !important;
+    }
+  </style>
+</head>
+<body>
+  <h1>View the Chair in AR</h1>
+
+  <model-viewer
+    id="chair-viewer"
+    src="/office_chair.glb"
+    ios-src="/ErgoMesh_Chair_0202185548.usdz"
+    alt="3D model of an office chair"
+    ar
+    ar-modes="scene-viewer webxr quick-look"
+    camera-controls
+    auto-rotate="false"
+    interaction-prompt="none"
+    ar-scale="fixed">
+    
+    <button slot="ar-button" class="ar-button">
+      Launch AR Experience 🚀
+    </button>
+  </model-viewer>
+
+  <p id="info-text">Tap the button above to view the chair in your space using AR.</p>
+
+  <script>
+    const modelViewer = document.getElementById('chair-viewer');
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+
+    if (isIOS) {
+      // Force Quick Look only
+      modelViewer.setAttribute('ar-modes', 'quick-look');
+
+      // Hide 3D object mode by removing orbit controls
+      modelViewer.removeAttribute('camera-controls');
+
+      // Prevent normal 3D from showing
+      modelViewer.setAttribute('reveal', 'manual');
+    }
+  </script>
 </body>
 </html>
