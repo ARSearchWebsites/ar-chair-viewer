@@ -48,11 +48,12 @@
 <button id="ar-button" class="ar-button">View in AR</button>
 
 <script>
-    const url   = new URLSearchParams(window.location.search);
-    const slug  = url.get('model') || 'office_chair';     // fallback
-    const mv    = document.getElementById('ar-model');
+    
+    //const url   = new URLSearchParams(window.location.search);
+    //const slug  = url.get('model') || 'office_chair';     // fallback
+    //const mv    = document.getElementById('ar-model');
 
-    mv.setAttribute('src',      `/models/${slug}.glb`);
+    //mv.setAttribute('src',      `/models/${slug}.glb`);
     const arButton = document.getElementById('ar-button');
     const modelViewer = document.getElementById('ar-model');
 
