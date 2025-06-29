@@ -37,7 +37,7 @@
     const slug = urlParams.get('model') || 'office_chair';
     const modelViewer = document.getElementById('ar-model');
     // Set the model src
-    modelViewer.setAttribute('src', `/models/${slug}.glb`);
+    modelViewer.setAttribute('src', `${slug}.glb`);
     // When the model is loaded, trigger AR mode
     modelViewer.addEventListener('load', () => {
         modelViewer.activateAR();
