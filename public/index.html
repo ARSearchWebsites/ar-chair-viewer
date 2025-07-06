@@ -27,6 +27,7 @@
     alt="3D model of an office chair"
     ar
     ar-modes="scene-viewer quick-look"
+    scale="0.5 0.5 0.5"
     camera-controls
     auto-rotate>
 </model-viewer>
@@ -34,7 +35,7 @@
 <script>
     // Parse model name from URL (?model=...) or fallback
     const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('model') || 'office_chair';
+    const slug = urlParams.get('model') || '3Dimage5_savanna';
     const modelViewer = document.getElementById('ar-model');
     // Set the model src
     modelViewer.setAttribute('src', `${slug}.glb`);
