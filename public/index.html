@@ -51,7 +51,7 @@
 
   // Hide button once AR begins
   viewer.addEventListener('ar-status', (e) => {
-    if (e.detail.status === 'session-started') btn.style.display = 'none';
+    btn.disabled = e.detail.status === 'session-started';
   });
 
   // Fallback to Scene Viewer if WebXR unsupported
