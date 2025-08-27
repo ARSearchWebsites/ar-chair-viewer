@@ -15,11 +15,22 @@
     #ar-model{width:100%;height:600px;background:#f0f0f0;}
     #launchBtn{margin-top:2rem;padding:12px 24px;font-size:1rem;font-weight:600;border:none;border-radius:4px;background:#0d6efd;color:#fff;}
     #launchBtn:hover{background:#0947b0;cursor:pointer;}
+
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      left: -99999px !important;
+      top: -99999px !important;
+      overflow: hidden !important;
+    }
+
+
   </style>
 </head>
 <body>
 
-<model-viewer id="ar-model"
+<model-viewer id="ar-model" class="visually-hidden"
   src="3Dimage5_savanna.glb"
   alt="3D model of an office chair"
   ar
@@ -47,6 +58,14 @@
     viewer.setAttribute('src', `${safeSlug}.glb`);
   })();
 
+
+  // Hide the 3D canvas ONLY when embedded in an iframe
+  //(function hideModelIfFramed(){
+   // if (window.top !== window.self) {
+    //  viewer.classList.add('hidden-when-framed');
+    //}
+  //})();
+
   // Launch AR (WebXR requires a gesture)
   btn.addEventListener('click', () => viewer.activateAR());
 
@@ -56,9 +75,9 @@
   });
 
   // Fallback to Scene Viewer if WebXR unsupported
-  viewer.addEventListener('load', () => {
-    if (!navigator.xr) viewer.activateAR();
-  });
+  //viewer.addEventListener('load', () => {
+   // if (!navigator.xr) viewer.activateAR();
+  //});
 </script>
 
 </body>
