@@ -52,7 +52,7 @@
   // --- NEW: swap model via ?model=slug ---
   (function setModelFromQuery(){
     const params = new URLSearchParams(window.location.search);
-    const slug = params.get('model') || '3Dimage5_savanna';
+    const slug = params.get('model') || '3Dimage3_andes';
     // Basic sanitize: allow letters, numbers, underscore, dash, dot
     const safeSlug = slug.replace(/[^a-z0-9_\-\.]/gi,'');
     viewer.setAttribute('src', `${safeSlug}.glb`);
