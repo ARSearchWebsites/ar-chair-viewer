@@ -7,14 +7,27 @@
   <!-- model-viewer -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
-  <!-- Permissions so WebXR can run in an <iframe> -->
+  <!-- IMPORTANT:
+       Your old Permissions-Policy meta was blocking camera/xr completely.
+       Remove it or relax it. For a top-level page, you can omit it entirely. -->
+  <!--
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), xr-spatial-tracking=*">
+  -->
 
   <style>
-    body{font-family:Arial,sans-serif;text-align:center;}
+    body{font-family:Arial,sans-serif;text-align:center;margin:0;padding:2rem;}
     #ar-model{width:100%;height:600px;background:#f0f0f0;}
-    #launchBtn{margin-top:2rem;padding:12px 24px;font-size:1rem;font-weight:600;border:none;border-radius:4px;background:#0d6efd;color:#fff;}
-    #launchBtn:hover{background:#0947b0;cursor:pointer;}
+    #launchBtn{
+      margin-top:2rem;
+      padding:12px 24px;
+      font-size:1rem;
+      font-weight:600;
+      border:none;
+      border-radius:4px;
+      background:#0d6efd;
+      color:#fff;
+    }
+    #launchBtn:hover:enabled{background:#0947b0;cursor:pointer;}
 
     .visually-hidden {
       position: absolute !important;
@@ -25,7 +38,11 @@
       overflow: hidden !important;
     }
 
-
+    #ar-status-msg {
+      margin-top:1rem;
+      font-size:0.9rem;
+      color:#555;
+    }
   </style>
 </head>
 <body>
@@ -43,41 +60,89 @@
   auto-rotate>
 </model-viewer>
 
-<button id="launchBtn">View in AR</button>
+<button id="launchBtn" disabled>Checking AR support…</button>
+<div id="ar-status-msg"></div>
 
 <script>
   const viewer = document.getElementById('ar-model');
   const btn    = document.getElementById('launchBtn');
+  const status = document.getElementById('ar-status-msg');
 
-  // --- NEW: swap model via ?model=slug ---
+  // --- model via ?model=slug ---
   (function setModelFromQuery(){
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('model') || '3Dimage1_atlas';
-    // Basic sanitize: allow letters, numbers, underscore, dash, dot
     const safeSlug = slug.replace(/[^a-z0-9_\-\.]/gi,'');
     viewer.setAttribute('src', `${safeSlug}.glb`);
   })();
 
+  // --- WebXR feature detection + configuration ---
+  async function initWebXR() {
+    // Default UI message while checking
+    btn.disabled = true;
+    btn.textContent = 'Checking AR support…';
+    status.textContent = '';
 
-  // Hide the 3D canvas ONLY when embedded in an iframe
-  //(function hideModelIfFramed(){
-   // if (window.top !== window.self) {
-    //  viewer.classList.add('hidden-when-framed');
-    //}
-  //})();
+    // 1) Is the WebXR API even present?
+    if (!('xr' in navigator)) {
+      // No WebXR at all → don't try AR, don't fall back
+      disableAR('This browser does not support WebXR AR. Try an ARCore-capable Android device with Chrome.');
+      return;
+    }
 
-  // Launch AR (WebXR requires a gesture)
-  btn.addEventListener('click', () => viewer.activateAR());
+    let immersiveArSupported = false;
+    try {
+      immersiveArSupported = await navigator.xr.isSessionSupported('immersive-ar');
+    } catch (err) {
+      console.error('Error while checking WebXR support:', err);
+    }
 
-  // Hide button once AR begins
-  viewer.addEventListener('ar-status', (e) => {
-    btn.disabled = e.detail.status === 'session-started';
+    if (!immersiveArSupported) {
+      // WebXR exists but AR sessions are not supported on this device
+      disableAR('WebXR is available, but immersive AR is not supported on this device.');
+      return;
+    }
+
+    // 2) WebXR immersive AR is supported → configure <model-viewer> to use ONLY WebXR
+    viewer.setAttribute('ar', '');
+    viewer.setAttribute('ar-modes', 'webxr');
+
+    btn.disabled = false;
+    btn.textContent = 'View in AR';
+    status.textContent = 'WebXR AR is supported on this device.';
+  }
+
+  function disableAR(message) {
+    // Turn off AR on the viewer completely
+    viewer.removeAttribute('ar');
+    viewer.removeAttribute('ar-modes');
+
+    btn.disabled = true;
+    btn.textContent = 'AR not available';
+    status.textContent = message;
+  }
+
+  // Initialize WebXR logic on load
+  initWebXR();
+
+  // Launch AR (WebXR requires a user gesture)
+  btn.addEventListener('click', () => {
+    if (!btn.disabled) {
+      viewer.activateAR();
+    }
   });
 
-  // Fallback to Scene Viewer if WebXR unsupported
-  //viewer.addEventListener('load', () => {
-   // if (!navigator.xr) viewer.activateAR();
-  //});
+  // Optional: update UI once AR session starts
+  viewer.addEventListener('ar-status', (e) => {
+    if (e.detail.status === 'session-started') {
+      btn.disabled = true;
+      btn.textContent = 'AR session running…';
+    } else if (e.detail.status === 'not-presenting') {
+      // When AR session ends, re-enable the button
+      btn.disabled = false;
+      btn.textContent = 'View in AR';
+    }
+  });
 </script>
 
 </body>
